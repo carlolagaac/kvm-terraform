@@ -12,5 +12,6 @@ Terraform infrastructure for spinning up virtual machines on linux servers using
 
 - bridge0_setup.sh list of commands to create bridge interface
 - kvm_setup.sh list of commands to configure kvm on host server
+- cleanup_tf.sh commands to cleanup terraform
 
 The Terraform infrastructure code assumes that the VMs will be networked via a DHCP bridge network.
