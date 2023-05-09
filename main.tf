@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 0.13"
+#  required_version = ">= 0.13"
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "0.6.3"
+      version = "0.7.1"
     }
   }
 }
@@ -21,7 +21,7 @@ variable "bridge" { default = "bridge0" }
 
 resource "libvirt_volume" "os_image" {
   name   = "os_image"
-  source = "http://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20201217.0.x86_64.qcow2"
+  source = "http://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "volume" {
@@ -72,6 +72,7 @@ resource "libvirt_domain" "domain" {
   network_interface {
     network_name   = var.network
     bridge         = var.bridge
+    mac            = "52:54:00:00:00:a${count.index + 1}"
     wait_for_lease = true
   }
 
