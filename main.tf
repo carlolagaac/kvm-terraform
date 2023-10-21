@@ -72,8 +72,9 @@ resource "libvirt_domain" "domain" {
   network_interface {
     network_name   = var.network
     bridge         = var.bridge
+    addresses      =  ["192.168.10.20${count.index + 1}"]
     mac            = "52:54:00:00:00:a${count.index + 1}"
-    wait_for_lease = true
+    wait_for_lease = false
   }
 
   depends_on = [
