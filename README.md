@@ -1,6 +1,7 @@
 ### kvm-terraform
 
 See accompanying blog post at https://ebcrowder.dev/kvm-terraform/
+NOTE: this blog post no longer exists
 
 Terraform infrastructure for spinning up virtual machines on linux servers using:
 
