@@ -21,7 +21,9 @@ variable "bridge" { default = "bridge0" }
 
 resource "libvirt_volume" "os_image" {
   name   = "os_image"
-  source = "http://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
+  # Suggestion is to download and put into a local directory and point to that rather than keep trying to download an image
+  # source = "http://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
+  source = "file:///vm/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "volume" {
