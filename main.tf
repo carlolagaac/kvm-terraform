@@ -14,23 +14,30 @@ provider "libvirt" {
 
 variable "hostname" { default = "k3s-server" }
 variable "memoryMB" { default = 1024 * 4 }
-variable "cpu" { default = 1 }
+variable "cpu" { default = 2 }
 variable "serverCount" { default = 3 }
 variable "network" { default = "kvmnet" }
 variable "bridge" { default = "bridge0" }
 
 resource "libvirt_volume" "os_image" {
-  name   = "os_image"
-  # Suggestion is to download and put into a local directory and point to that rather than keep trying to download an image
-  # source = "http://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
+  name   = "os_image"i
+  # Suggestion is to download the image and then call locally to save from download timeout"
+  #source = "http://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
   source = "file:///vm/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
 }
 
-resource "libvirt_volume" "volume" {
+resource "libvirt_volume" "server_volume" {
   count          = var.serverCount
-  name           = "volume-${count.index}"
+  name           = "server_volume-${count.index}"
   base_volume_id = libvirt_volume.os_image.id
   format         = "qcow2"
+}
+
+resource "libvirt_volume" "spare_volume" {
+  count          = var.serverCount
+  name           = "spare_volume-${count.index}"
+  format         = "qcow2"
+  size           = 10737418240
 }
 
 resource "libvirt_cloudinit_disk" "commoninit" {
@@ -68,7 +75,11 @@ resource "libvirt_domain" "domain" {
   autostart  = true
 
   disk {
-    volume_id = element(libvirt_volume.volume.*.id, count.index)
+    volume_id = element(libvirt_volume.server_volume.*.id, count.index)
+  }
+  
+  disk {
+    volume_id = element(libvirt_volume.spare_volume.*.id, count.index)
   }
 
   network_interface {
