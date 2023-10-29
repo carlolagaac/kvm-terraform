@@ -37,7 +37,7 @@ resource "libvirt_volume" "spare_volume" {
   count          = var.serverCount
   name           = "spare_volume-${count.index}"
   format         = "qcow2"
-  size           = 10737418240
+  size           = 107374182400
 }
 
 resource "libvirt_cloudinit_disk" "commoninit" {
