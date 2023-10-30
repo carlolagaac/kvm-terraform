@@ -14,8 +14,8 @@ provider "libvirt" {
 
 variable "hostname" { default = "k3s-server" }
 variable "memoryMB" { default = 1024 * 4 }
-variable "cpu" { default = 1 }
-variable "serverCount" { default = 5 }
+variable "cpu" { default = 2 }
+variable "serverCount" { default = 4 }
 variable "network" { default = "kvmnet" }
 variable "bridge" { default = "bridge0" }
 
@@ -37,7 +37,7 @@ resource "libvirt_volume" "spare_volume" {
   count          = var.serverCount
   name           = "spare_volume-${count.index}"
   format         = "qcow2"
-  size           = 10737418240
+  size           = 53687091200
 }
 
 resource "libvirt_cloudinit_disk" "commoninit" {
