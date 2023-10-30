@@ -14,8 +14,8 @@ provider "libvirt" {
 
 variable "hostname" { default = "k3s-server" }
 variable "memoryMB" { default = 1024 * 4 }
-variable "cpu" { default = 1 }
-variable "serverCount" { default = 5 }
+variable "cpu" { default = 2 }
+variable "serverCount" { default = 4 }
 variable "network" { default = "kvmnet" }
 variable "bridge" { default = "bridge0" }
 
