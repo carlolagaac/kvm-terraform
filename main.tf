@@ -28,6 +28,7 @@ resource "libvirt_volume" "os_image" {
 
 resource "libvirt_volume" "server_volume" {
   count          = var.serverCount
+  pool           = "default" #Use the default storage pool for vm
   name           = "server_volume-${count.index}"
   base_volume_id = libvirt_volume.os_image.id
   format         = "qcow2"
@@ -35,6 +36,7 @@ resource "libvirt_volume" "server_volume" {
 
 resource "libvirt_volume" "spare_volume" {
   count          = var.serverCount
+  pool           = "data" # Use data storage pool
   name           = "spare_volume-${count.index}"
   format         = "qcow2"
   size           = 107374182400
