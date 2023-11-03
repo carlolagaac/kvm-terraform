@@ -36,7 +36,7 @@ resource "libvirt_volume" "server_volume" {
 
 resource "libvirt_volume" "spare_volume" {
   count          = var.serverCount
-  pool           = "data" # Use data storage pool
+  pool           = "vmdata" # Use data storage pool
   name           = "spare_volume-${count.index}"
   format         = "qcow2"
   size           = 107374182400
