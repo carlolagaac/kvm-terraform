@@ -22,8 +22,8 @@ variable "bridge" { default = "bridge0" }
 resource "libvirt_volume" "os_image" {
   name   = "os_image"
   # Suggestion is to download the image and then call locally to save from download timeout"
-  #source = "https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
-  source = "file:///vm/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
+  #source = "http://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.qcow2"
+  source = "file:///vm/Fedora-Cloud-Base-39-1.5.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "server_volume" {
