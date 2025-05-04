@@ -92,6 +92,18 @@ resource "libvirt_domain" "domain" {
     wait_for_lease = false
   }
 
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
+  }
+
+  console {
+    type        = "pty"
+    target_type = "virtio"
+    target_port = "1"
+  }
+
   depends_on = [
     libvirt_network.network,
   ]
