@@ -23,7 +23,7 @@ resource "libvirt_volume" "os_image" {
   name   = "os_image"
   # Suggestion is to download the image and then call locally to save from download timeout"
   #source = "https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
-  source = "file:///vm/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
+  source = "file://vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "server_volume" {
@@ -64,7 +64,7 @@ resource "libvirt_network" "network" {
   dhcp {
     enabled = true
   }
-  addresses = ["192.168.122.0/24"]
+  addresses = ["192.168.10.0/24"]
   bridge    = var.bridge
 }
 
@@ -75,6 +75,10 @@ resource "libvirt_domain" "domain" {
   vcpu       = var.cpu
   qemu_agent = true
   autostart  = true
+
+  cpu {
+    mode = "host-passthrough"
+  }
 
   disk {
     volume_id = element(libvirt_volume.server_volume.*.id, count.index)
@@ -87,7 +91,7 @@ resource "libvirt_domain" "domain" {
   network_interface {
     network_name   = var.network
     bridge         = var.bridge
-    addresses      =  ["192.168.10.20${count.index + 1}"]
+    addresses      = ["192.168.10.20${count.index + 1}"]
     mac            = "52:54:00:00:00:a${count.index + 1}"
     wait_for_lease = false
   }

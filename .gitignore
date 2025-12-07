@@ -11,6 +11,12 @@
 # Terraform lockfile
 .terraform.lock.hcl
 
+# SSH keys (generated locally, not committed)
+id_rsa
+id_rsa.pub
+*.pem
+*.key
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
