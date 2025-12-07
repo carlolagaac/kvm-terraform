@@ -1,9 +1,9 @@
 terraform {
-#  required_version = ">= 0.13"
+  required_version = ">= 1.0"
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "0.7.1"
+      version = "0.9.1"
     }
   }
 }
@@ -23,7 +23,7 @@ resource "libvirt_volume" "os_image" {
   name   = "os_image"
   # Suggestion is to download the image and then call locally to save from download timeout"
   #source = "https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
-  source = "file://vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
+  source = "file://git vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "server_volume" {
