@@ -53,7 +53,9 @@ resource "libvirt_cloudinit_disk" "commoninit" {
 
 resource "libvirt_network" "network" {
   name      = var.network
+  mode      = "bridge"
   autostart = true
+  addresses = ["192.168.10.0/24"]
   bridge    = var.bridge
 }
 
