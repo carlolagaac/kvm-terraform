@@ -84,7 +84,7 @@ resource "libvirt_domain" "domain" {
     bridge         = var.bridge
     addresses      = ["192.168.10.20${count.index + 1}"]
     mac            = "52:54:00:00:00:a${count.index + 1}"
-    wait_for_lease = false
+    wait_for_lease = true
   }
 
   console {
@@ -107,5 +107,5 @@ resource "libvirt_domain" "domain" {
 }
 
 output "ips" {
-  value = libvirt_domain.domain.*.network_interface.0.addresses
+  value = [for domain in libvirt_domain.domain : domain.network_interface[0].addresses]
 }
