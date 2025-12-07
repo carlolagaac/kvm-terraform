@@ -3,7 +3,7 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "0.9.1"
+      version = "0.7.6"
     }
   }
 }
@@ -20,36 +20,35 @@ variable "network" { default = "kvmnet" }
 variable "bridge" { default = "bridge0" }
 
 resource "libvirt_volume" "os_image" {
-  name = "os_image"
-  pool = "default"
+  name   = "os_image"
+  pool   = "default"
   # Suggestion is to download the image and then call locally to save from download timeout"
   #source = "https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
-  source_file = "/vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
+  source = "file:///vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "server_volume" {
-  count           = var.serverCount
-  pool            = "default" #Use the default storage pool for vm
-  name            = "server_volume-${count.index}"
-  base_volume_name = libvirt_volume.os_image.name
-  base_volume_pool = "default"
+  count          = var.serverCount
+  pool           = "default" #Use the default storage pool for vm
+  name           = "server_volume-${count.index}"
+  base_volume_id = libvirt_volume.os_image.id
+  format         = "qcow2"
 }
 
 resource "libvirt_volume" "spare_volume" {
-  count = var.serverCount
-  pool  = "vmdata" # Use data storage pool
-  name  = "spare_volume-${count.index}"
-  capacity = 107374182400
+  count  = var.serverCount
+  pool   = "vmdata" # Use data storage pool
+  name   = "spare_volume-${count.index}"
+  format = "qcow2"
+  size   = 107374182400
 }
 
 resource "libvirt_cloudinit_disk" "commoninit" {
   count     = var.serverCount
   name      = "${var.hostname}-commoninit-${count.index}.iso"
-  pool      = "default"
   user_data = templatefile("${path.module}/cloud_init.cfg", {
     hostname = "${var.hostname}-${count.index}"
   })
-  meta_data = ""
 }
 
 resource "libvirt_network" "network" {
@@ -73,7 +72,7 @@ resource "libvirt_domain" "domain" {
   disk {
     volume_id = element(libvirt_volume.server_volume.*.id, count.index)
   }
-  
+
   disk {
     volume_id = element(libvirt_volume.spare_volume.*.id, count.index)
   }
