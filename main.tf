@@ -20,51 +20,41 @@ variable "network" { default = "kvmnet" }
 variable "bridge" { default = "bridge0" }
 
 resource "libvirt_volume" "os_image" {
-  name   = "os_image"
+  name = "os_image"
+  pool = "default"
   # Suggestion is to download the image and then call locally to save from download timeout"
   #source = "https://dl.fedoraproject.org/pub/fedora/linux/releases/41/Cloud/x86_64/images/Fedora-Cloud-Base-Generic-41-1.4.x86_64.qcow2"
-  source = "file://git vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
+  source_file = "/vm/Fedora-Cloud-Base-Generic-43-1.6.x86_64.qcow2"
 }
 
 resource "libvirt_volume" "server_volume" {
-  count          = var.serverCount
-  pool           = "default" #Use the default storage pool for vm
-  name           = "server_volume-${count.index}"
-  base_volume_id = libvirt_volume.os_image.id
-  format         = "qcow2"
+  count           = var.serverCount
+  pool            = "default" #Use the default storage pool for vm
+  name            = "server_volume-${count.index}"
+  base_volume_name = libvirt_volume.os_image.name
+  base_volume_pool = "default"
 }
 
 resource "libvirt_volume" "spare_volume" {
-  count          = var.serverCount
-  pool           = "vmdata" # Use data storage pool
-  name           = "spare_volume-${count.index}"
-  format         = "qcow2"
-  size           = 107374182400
+  count = var.serverCount
+  pool  = "vmdata" # Use data storage pool
+  name  = "spare_volume-${count.index}"
+  capacity = 107374182400
 }
 
 resource "libvirt_cloudinit_disk" "commoninit" {
   count     = var.serverCount
   name      = "${var.hostname}-commoninit-${count.index}.iso"
-  user_data = data.template_file.user_data[count.index].rendered
-}
-
-
-data "template_file" "user_data" {
-  count    = var.serverCount
-  template = file("${path.module}/cloud_init.cfg")
-  vars = {
+  pool      = "default"
+  user_data = templatefile("${path.module}/cloud_init.cfg", {
     hostname = "${var.hostname}-${count.index}"
-  }
+  })
+  meta_data = ""
 }
 
 resource "libvirt_network" "network" {
   name      = var.network
-  mode      = "bridge"
   autostart = true
-  dhcp {
-    enabled = true
-  }
-  addresses = ["192.168.10.0/24"]
   bridge    = var.bridge
 }
 
